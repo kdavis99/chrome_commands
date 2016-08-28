@@ -1,32 +1,48 @@
 window.onload = function() {
-   function parse_command() {
+   // function to initialize the array of tabs
+   var all_tabs = new Array();
+   function init() {
       chrome.tabs.query({currentWindow: true}, function (arrayOfTabs) {
-         var all_tabs = new Array();
          for (i = 0; i < arrayOfTabs.length; i++) {
             all_tabs[i] = arrayOfTabs[i];
          }
-         var input = document.getElementById('user_input').value;
-         var input_commands = input.split(";");
+         parse_commands();
+      });
+   }
 
-         for (command in input_commands) {
-            var command_by_space = input_commands[command].split(" ");
+   var separate_commands = new Array();
+   function parse_commands() {
+      var input = document.getElementById('user_input').value;
+      var input_commands = input.split(";");
+      for (command in input_commands) {
+         separate_commands.push(input_commands[command]);
+         execute_commands(input_commands[command]);
+      }
+   }
 
-            for (str in command_by_space) {
-               if (command_by_space[str].includes("/")) {
-                  var range = command_by_space[str].split("/");
-                  var first = range[0];
-                  var second = range[1];
+   // function to execute each of the arrays 
+   function execute_commands(command) {
+         var command_by_space = command.split(" ");
+
+         for (str in command_by_space) {
+            if (command_by_space[str].includes("/")) {
+               var range = command_by_space[str].split("/");
+               var first = range[0];
+               var second = range[1];
+               // if "5/" -- the range is only 5
+               if (!range[1]) {
+                  second = first;
                }
-               if (command_by_space[str] == "cp") {
-                  for (i = first - 1; i < second; i++) {
-                     if (arrayOfTabs[i + 1]) {
-                        chrome.tabs.duplicate(arrayOfTabs[i + 1].id);
-                     }
+            } else if (command_by_space[str] == "cp") {
+               // potential "hacky" solution - however it seemed to be more
+               // of a bug in chrome.tabs.duplicate
+               for (i = first - 1; i < second; i++) {
+                  if (all_tabs[i + 1]) {
+                     chrome.tabs.duplicate(all_tabs[i + 1].id);
                   }
                }
             }
-         }
-      });
+      }
    }
-   document.getElementById('user').onclick = parse_command;
+   document.getElementById('user').onclick = init;
 }
