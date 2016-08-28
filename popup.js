@@ -12,7 +12,7 @@ window.onload = function() {
             all_tabs[i] = arrayOfTabs[i];
             // map used for removing duplicate tabs/doing things with
             // the tab by name
-            map_tabs[arrayOfTabs[i].title] = arrayOfTabs[i];
+            map_tabs[arrayOfTabs[i].title.toLowerCase()] = arrayOfTabs[i];
          }
          parse_commands();
       });
@@ -65,7 +65,8 @@ window.onload = function() {
             console.log("yydd");
             console.log(command_by_space[++str]);
             for (tabs in map_tabs) {
-               if (tabs.includes(command_by_space[str])) {
+               // toLowerCase to enforce normalization
+               if (tabs.includes(command_by_space[str].toLowerCase())) {
                   switch(word) {
                      case "yy":
                         console.log("yy");
@@ -79,6 +80,8 @@ window.onload = function() {
                }
             }
          }
+         // add deleting all duplicate tabs
+         // do reload
       }
    }
    document.getElementById('user').onclick = init;
