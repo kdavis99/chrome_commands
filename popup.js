@@ -6,7 +6,8 @@ window.onload = function() {
    // function to initialize the array of tabs
    var all_tabs = new Array();
    var map_tabs = {};
-   function init() {
+   function get_tabs() {
+      console.log("here");
       chrome.tabs.query({currentWindow: true}, function (arrayOfTabs) {
          for (i = 0; i < arrayOfTabs.length; i++) {
             all_tabs[i] = arrayOfTabs[i];
@@ -14,6 +15,10 @@ window.onload = function() {
             // the tab by name
             map_tabs[arrayOfTabs[i].title.toLowerCase()] = arrayOfTabs[i];
          }
+         console.log("here please");
+         // (TODO: kylee) - only call parse commands on the first call to init.
+         // After that, we want the updated tabs that are created from other calls
+         // (like duplicate). Needed for: "<name> cp; rmcps;"
          parse_commands();
       });
    }
@@ -30,6 +35,7 @@ window.onload = function() {
 
    // function to execute each of the arrays 
    function execute_commands(command) {
+      get_tabs();
       var command_by_space = command.split(" ");
       console.log(command);
 
@@ -42,26 +48,26 @@ window.onload = function() {
             var range = word.split("/");
             var first = range[0];
             var second = range[1];
-         } else if ((first > -1 && second > -1) && (word == "yy" || word == "dd")) {
-            console.log("yyrdd");
+         } else if ((first > -1 && second > -1) && (word == "cp" || word == "rm")) {
+            console.log("cprrm");
             // potential "hacky" solution - however it seemed to be more
             // of a bug in chrome.tabs.duplicate
             for (i = first - 1; i < second; i++) {
                if (all_tabs[i + 1]) {
                   switch(word) {
-                     case "yy":
-                        console.log("fyy" + (i + 1));
+                     case "cp":
+                        console.log("fcp" + (i + 1));
                         console.log(all_tabs[i+1].id);
                         chrome.tabs.duplicate(all_tabs[i + 1].id);
                         break;
-                     case "dd":
-                        console.log("fdd");
+                     case "rm":
+                        console.log("frm");
                         chrome.tabs.remove(all_tabs[i + 1].id);
                         break;
                   }
                }
             }
-         } else if (word == "rmdup") {
+         } else if (word == "rmcps") {
             // remove all tabs with a duplicate title
             var count_map = {};
             for (tab in all_tabs) {
@@ -73,14 +79,14 @@ window.onload = function() {
                }
             }
          } else if (/[0-9a-z]/i.test(word)) {
-            console.log("yydd");
+            console.log("cprm");
             console.log(command_by_space[++str]);
             found_num = false;
             for (tabs in map_tabs) {
                if (!found_num && map_tabs[tabs] && (map_tabs[tabs].url.includes(word.toLowerCase()) ||
                         tabs.includes(word.toLowerCase()) || /[0-9]/.test(word))) {
                   switch(command_by_space[str]) {
-                     case "dd":
+                     case "rm":
                      {
                         if (/[0-9]/.test(word)) {
                            chrome.tabs.remove(all_tabs[word].id);
@@ -102,9 +108,9 @@ window.onload = function() {
                         }
                         break;
                      }
-                     case "yy":
+                     case "cp":
                      {
-                        console.log("yy");
+                        console.log("cp");
                         // check if deleting index (number) or title
                         if (/[0-9]/.test(word)) {
                            chrome.tabs.duplicate(all_tabs[word].id);
@@ -120,5 +126,7 @@ window.onload = function() {
          }
       }
    }
-   document.getElementById('user').onclick = init;
+   // (TODO: kylee) - create google calendar event/google doc/etc
+   //    Google Calendar: date, time, name of event, description, etc.
+   document.getElementById('user').onclick = get_tabs;
 }
