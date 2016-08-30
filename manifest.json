@@ -1,6 +1,6 @@
 {
-   "name": "A browser action with a popup that changes the page color",
-   "description": "Change the current page color",
+   "name": "Chrome Commands TODO(kylee): better name",
+   "description": "TODO(kylee): be clever about this later.",
    "version": "1.0",
    "permissions": [
       "tabs", "browsingData", "http://*/*", "https://*/*"
@@ -11,6 +11,13 @@
       "default_popup": "popup.html"
    },
    "commands": {
+      "toggle-feature-submit": {
+         "suggested_key": {
+            "default": "Ctrl+Shift+K",
+            "mac": "Command+Shift+K"
+         },
+         "description": "Click submit for user"
+      },
       "_execute_browser_action": {
          "suggested_key": {
             "windows": "Ctrl+Shift+Y",

@@ -1,4 +1,11 @@
 window.onload = function() {
+   chrome.commands.onCommand.addListener(function(command) {
+      console.log('Command:', command);
+      if (command == "toggle-feature-submit") {
+         document.getElementById('user').click();
+      }
+   });
+
    function trim(s){ 
       return ( s || '' ).replace( /^\s+|\s+$/g, '' ); 
    }
@@ -87,39 +94,39 @@ window.onload = function() {
                         tabs.includes(word.toLowerCase()) || /[0-9]/.test(word))) {
                   switch(command_by_space[str]) {
                      case "rm":
-                     {
-                        if (/[0-9]/.test(word)) {
-                           chrome.tabs.remove(all_tabs[word].id);
-                           found_num = true;
-                        } else {
-                           console.log(map_tabs[tabs]);
-                           chrome.tabs.remove(map_tabs[tabs].id);
+                        {
+                           if (/[0-9]/.test(word)) {
+                              chrome.tabs.remove(all_tabs[word].id);
+                              found_num = true;
+                           } else {
+                              console.log(map_tabs[tabs]);
+                              chrome.tabs.remove(map_tabs[tabs].id);
+                           }
+                           break;
                         }
-                        break;
-                     }
                      case "rr":
-                     {
-                        console.log("rr");
-                        if (/[0-9]/.test(word)) {
-                           chrome.tabs.reload(all_tabs[word].id);
-                           found_num = true;
-                        } else {
-                           chrome.tabs.reload(map_tabs[tabs].id);
+                        {
+                           console.log("rr");
+                           if (/[0-9]/.test(word)) {
+                              chrome.tabs.reload(all_tabs[word].id);
+                              found_num = true;
+                           } else {
+                              chrome.tabs.reload(map_tabs[tabs].id);
+                           }
+                           break;
                         }
-                        break;
-                     }
                      case "cp":
-                     {
-                        console.log("cp");
-                        // check if deleting index (number) or title
-                        if (/[0-9]/.test(word)) {
-                           chrome.tabs.duplicate(all_tabs[word].id);
-                           found_num = true;
-                        } else {
-                           chrome.tabs.duplicate(map_tabs[tabs].id);
+                        {
+                           console.log("cp");
+                           // check if deleting index (number) or title
+                           if (/[0-9]/.test(word)) {
+                              chrome.tabs.duplicate(all_tabs[word].id);
+                              found_num = true;
+                           } else {
+                              chrome.tabs.duplicate(map_tabs[tabs].id);
+                           }
+                           break;
                         }
-                        break;
-                     }
                   }
                }
             }
